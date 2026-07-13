@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ai-news": {
+      "command": "python",
+      "args": ["server.py"]
+    }
+  }
+}

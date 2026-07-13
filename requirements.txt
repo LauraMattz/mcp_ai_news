@@ -1,0 +1,17 @@
+# MCP AI News Aggregator - Dependencies
+
+# MCP Framework (para uso local com Claude Code/Desktop)
+mcp>=1.0.0
+
+# FastAPI REST API (para deploy em servidor)
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+
+# RSS/Feed Parsing
+feedparser>=6.0.10
+
+# HTTP Requests (ArXiv, GitHub APIs)
+requests>=2.31.0
+
+# Async HTTP (future use)
+aiohttp>=3.9.0
