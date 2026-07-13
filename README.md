@@ -346,41 +346,6 @@ curl https://sua-api.com/github?days=7
 
 ---
 
-## Deploy no Render (Gratuito)
-
-1. **Crie conta no Render:** https://render.com (use GitHub login)
-
-2. **Novo Web Service:**
-   - Dashboard → "New" → "Web Service"
-   - Conecte este repositório GitHub
-
-3. **Configuração:**
-   - **Name:** `ai-news-api` (ou outro nome)
-   - **Region:** Oregon (US West)
-   - **Branch:** `main`
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `uvicorn api:app --host 0.0.0.0 --port $PORT`
-   - **Plan:** Free
-
-4. **Deploy:** Render detecta `render.yaml` automaticamente e faz deploy
-
-5. **URL:** `https://ai-news-api-XXXXX.onrender.com`
-
-6. **Testar:**
-   ```bash
-   curl https://SEU_APP.onrender.com/health
-   curl https://SEU_APP.onrender.com/news?days=7
-   ```
-
-**Docs interativas:** `https://SEU_APP.onrender.com/docs`
-
-**Limitações Free Tier:**
-- 750h/mês (suficiente para uso moderado)
-- Dorme após 15 min inatividade (primeira request ~30s)
-- 512 MB RAM
-
----
-
 ## MCP Tools Reference
 
 ### Tools para Claude Code/Desktop
