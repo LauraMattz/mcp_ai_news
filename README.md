@@ -13,31 +13,31 @@
 
 ---
 
-## 📋 Índice
+## Índice
 
-- [Sobre](#-sobre)
-- [Features](#-features)
-- [Fontes de Dados](#-fontes-de-dados)
-- [Instalação](#-instalação)
+- [Sobre](#sobre)
+- [Features](#features)
+- [Fontes de Dados](#fontes-de-dados)
+- [Instalação](#instalação)
   - [MCP Server (Local)](#mcp-server-local)
   - [REST API (Deploy)](#rest-api-deploy)
-- [Uso](#-uso)
+- [Uso](#uso)
   - [Claude Code/Desktop](#claude-codedesktop)
   - [REST API](#rest-api)
   - [Claude Web](#claude-web)
-- [API Reference](#-api-reference)
-- [Cache](#-cache)
-- [Deploy](#-deploy)
-- [Desenvolvimento](#-desenvolvimento)
-- [Performance](#-performance)
-- [Troubleshooting](#-troubleshooting)
-- [Contribuindo](#-contribuindo)
-- [Autor](#-autor)
-- [Licença](#-licença)
+- [API Reference](#api-reference)
+- [Cache](#cache)
+- [Deploy](#deploy)
+- [Desenvolvimento](#desenvolvimento)
+- [Performance](#performance)
+- [Troubleshooting](#troubleshooting)
+- [Contribuindo](#contribuindo)
+- [Autor](#autor)
+- [Licença](#licença)
 
 ---
 
-## 🎯 Sobre
+## Sobre
 
 Este projeto oferece **duas formas** de acessar conteúdo sobre IA:
 
@@ -53,20 +53,20 @@ Este projeto oferece **duas formas** de acessar conteúdo sobre IA:
 
 ---
 
-## ✨ Features
+## Features
 
-- ✅ **10 fontes confiáveis** de conteúdo sobre IA
-- ✅ **Filtro temporal** configurável (1-90 dias)
-- ✅ **Busca por palavra-chave** em títulos e resumos
-- ✅ **Cache em memória** (15 min) para performance
-- ✅ **MCP Server** para Claude Code/Desktop
-- ✅ **REST API** com documentação Swagger/ReDoc
-- ✅ **CORS habilitado** para acesso público
-- ✅ **Deploy gratuito** no Render
+- 10 fontes confiáveis de conteúdo sobre IA
+- Filtro temporal configurável (1-90 dias)
+- Busca por palavra-chave em títulos e resumos
+- Cache em memória (15 min) para performance
+- MCP Server para Claude Code/Desktop
+- REST API com documentação Swagger/ReDoc
+- CORS habilitado para acesso público
+- Deploy gratuito no Render
 
 ---
 
-## 📰 Fontes de Dados
+## Fontes de Dados
 
 ### Blogs RSS (8 fontes)
 
@@ -91,7 +91,7 @@ Topics: `artificial-intelligence`, `machine-learning`, `deep-learning`, `llm`, `
 
 ---
 
-## 🚀 Instalação
+## Instalação
 
 ### MCP Server (Local)
 
@@ -151,7 +151,7 @@ http://localhost:8000/docs
 
 ---
 
-## 💻 Uso
+## Uso
 
 ### Claude Code/Desktop
 
@@ -221,7 +221,7 @@ e resuma os avanços em modelos transformer
 
 ---
 
-## 📚 API Reference
+## API Reference
 
 ### `GET /news`
 
@@ -274,7 +274,7 @@ Lista repos trending.
 
 ---
 
-## ⚡ Cache
+## Cache
 
 Sistema de cache em memória para performance:
 
@@ -291,7 +291,7 @@ Sistema de cache em memória para performance:
 
 ---
 
-## 🌐 Deploy
+## Deploy
 
 ### Render (Gratuito)
 
@@ -317,7 +317,7 @@ Sistema de cache em memória para performance:
 
 ---
 
-## 🛠 Desenvolvimento
+## Desenvolvimento
 
 ### Adicionar nova fonte RSS
 
@@ -367,7 +367,7 @@ python api.py
 
 ---
 
-## 📊 Performance
+## Performance
 
 | Métrica | Valor |
 |---------|-------|
@@ -386,20 +386,20 @@ python api.py
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Claude não vê o servidor
 
-- ✅ Verifique `.mcp.json` está na **raiz** do projeto
-- ✅ Caminho correto no `args`
-- ✅ Recarregue: `Ctrl+Shift+P` → "Reload Window"
-- ✅ Teste: `python server.py` (não deve dar erro)
+- Verifique `.mcp.json` está na **raiz** do projeto
+- Caminho correto no `args`
+- Recarregue: `Ctrl+Shift+P` → "Reload Window"
+- Teste: `python server.py` (não deve dar erro)
 
 ### API timeout (Render)
 
-- ⏰ Primeira request demora ~30s (cold start)
-- 💡 Render free tier dorme após 15 min inatividade
-- ✅ Requests seguintes são rápidas (cache)
+- Primeira request demora ~30s (cold start)
+- Render free tier dorme após 15 min inatividade
+- Requests seguintes são rápidas (cache)
 
 ### Erro de módulo
 
@@ -409,13 +409,13 @@ pip install -r requirements.txt --upgrade
 
 ### ArXiv/GitHub sem resultados
 
-- 🌐 Verifique conexão internet
-- ⏱️ APIs podem ter rate limits temporários
-- 📅 Tente aumentar `days` parameter (ex: `days=30`)
+- Verifique conexão internet
+- APIs podem ter rate limits temporários
+- Tente aumentar `days` parameter (ex: `days=30`)
 
 ---
 
-## 🤝 Contribuindo
+## Contribuindo
 
 Contribuições são bem-vindas via Pull Requests!
 
@@ -435,7 +435,7 @@ Contribuições são bem-vindas via Pull Requests!
 
 ---
 
-## 👤 Autor
+## Autor
 
 **Laura Mattos**
 
@@ -444,13 +444,13 @@ Contribuições são bem-vindas via Pull Requests!
 
 ---
 
-## 📄 Licença
+## Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 
-## 🙏 Créditos
+## Créditos
 
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io) - Framework MCP
 - [FastAPI](https://fastapi.tiangolo.com) - Framework REST API
@@ -466,8 +466,8 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 Mantendo a comunidade atualizada sobre Inteligência Artificial
 
-[🌐 Live API](https://mcp-ai-news.onrender.com/docs) • [📖 Docs](https://mcp-ai-news.onrender.com/redoc) • [🐛 Issues](https://github.com/LauraMattz/mcp_ai_news/issues)
+[Live API](https://mcp-ai-news.onrender.com/docs) • [Docs](https://mcp-ai-news.onrender.com/redoc) • [Issues](https://github.com/LauraMattz/mcp_ai_news/issues)
 
-Desenvolvido com ❤️ por [Laura Mattos](https://www.linkedin.com/in/lauramattosc/)
+Desenvolvido por [Laura Mattos](https://www.linkedin.com/in/lauramattosc/)
 
 </div>
