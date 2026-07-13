@@ -9,7 +9,33 @@
 [![Deploy](https://img.shields.io/badge/Deploy-Render-purple)](https://render.com)
 [![Status](https://img.shields.io/badge/Status-Active-success)]()
 
-**Live API:** [mcp-ai-news.onrender.com](https://mcp-ai-news.onrender.com/docs)
+---
+
+## API Pública Disponível
+
+**Base URL:** `https://mcp-ai-news.onrender.com`
+
+A API REST está **online e funcionando** com os seguintes endpoints:
+
+| Endpoint | Descrição |
+|----------|-----------|
+| [/docs](https://mcp-ai-news.onrender.com/docs) | Documentação interativa (Swagger UI) |
+| [/redoc](https://mcp-ai-news.onrender.com/redoc) | Documentação alternativa (ReDoc) |
+| [/health](https://mcp-ai-news.onrender.com/health) | Health check |
+| [/news](https://mcp-ai-news.onrender.com/news?days=7&limit=10) | Notícias agregadas |
+| [/search?q=GPT](https://mcp-ai-news.onrender.com/search?q=GPT) | Busca por palavra-chave |
+| [/papers](https://mcp-ai-news.onrender.com/papers?days=7) | Papers do ArXiv |
+| [/github](https://mcp-ai-news.onrender.com/github?days=7) | Repos trending |
+| [/sources](https://mcp-ai-news.onrender.com/sources) | Fontes configuradas |
+
+**Teste agora:** [Ver últimas notícias](https://mcp-ai-news.onrender.com/news?days=7&limit=10)
+
+**Features da API:**
+- Cache de 15 minutos para performance
+- CORS habilitado (acesso de qualquer origem)
+- Documentação automática com exemplos
+- Resposta em JSON
+- Gratuito e sem autenticação
 
 ---
 
@@ -27,10 +53,8 @@
   - [Claude Web](#claude-web)
 - [API Reference](#api-reference)
 - [Cache](#cache)
-- [Deploy](#deploy)
 - [Desenvolvimento](#desenvolvimento)
 - [Performance](#performance)
-- [Troubleshooting](#troubleshooting)
 - [Contribuindo](#contribuindo)
 - [Autor](#autor)
 - [Licença](#licença)
@@ -291,32 +315,6 @@ Sistema de cache em memória para performance:
 
 ---
 
-## Deploy
-
-### Render (Gratuito)
-
-1. Fork este repositório
-2. Criar conta: [render.com](https://render.com)
-3. **New Web Service** → conectar GitHub
-4. Render detecta `render.yaml` automaticamente
-5. Deploy em ~5 minutos
-
-**Build:** `pip install -r requirements.txt`
-**Start:** `uvicorn api:app --host 0.0.0.0 --port $PORT`
-
-**Free tier:**
-- 750h/mês
-- Dorme após 15 min inatividade
-- 512 MB RAM
-
-### Alternativas
-
-- **Railway:** 500h/mês ou $5 crédito
-- **Fly.io:** $5 crédito/mês
-- **Docker:** Use `render.yaml` como referência
-
----
-
 ## Desenvolvimento
 
 ### Adicionar nova fonte RSS
@@ -383,35 +381,6 @@ python api.py
 - Busca paralela de múltiplas fontes
 - HTTP headers cache natural (ETags, Last-Modified)
 - Timeout configurável
-
----
-
-## Troubleshooting
-
-### Claude não vê o servidor
-
-- Verifique `.mcp.json` está na **raiz** do projeto
-- Caminho correto no `args`
-- Recarregue: `Ctrl+Shift+P` → "Reload Window"
-- Teste: `python server.py` (não deve dar erro)
-
-### API timeout (Render)
-
-- Primeira request demora ~30s (cold start)
-- Render free tier dorme após 15 min inatividade
-- Requests seguintes são rápidas (cache)
-
-### Erro de módulo
-
-```bash
-pip install -r requirements.txt --upgrade
-```
-
-### ArXiv/GitHub sem resultados
-
-- Verifique conexão internet
-- APIs podem ter rate limits temporários
-- Tente aumentar `days` parameter (ex: `days=30`)
 
 ---
 
