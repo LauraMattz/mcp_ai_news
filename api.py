@@ -11,6 +11,32 @@ from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 import xml.etree.ElementTree as ET
 import requests
+import time
+
+# ============================================================================
+# CACHE EM MEMORIA
+# ============================================================================
+
+CACHE = {}
+CACHE_TTL = 900  # 15 minutos em segundos
+
+def get_from_cache(key: str):
+    """Busca item do cache se ainda válido"""
+    if key in CACHE:
+        data, timestamp = CACHE[key]
+        if time.time() - timestamp < CACHE_TTL:
+            print(f"[CACHE HIT] {key}")
+            return data
+        else:
+            # Cache expirado, remover
+            del CACHE[key]
+    print(f"[CACHE MISS] {key}")
+    return None
+
+def save_to_cache(key: str, data):
+    """Salva item no cache com timestamp"""
+    CACHE[key] = (data, time.time())
+    print(f"[CACHE SAVED] {key}")
 
 # ============================================================================
 # CONFIGURACAO FASTAPI
@@ -325,6 +351,15 @@ async def get_news(
     - **limit**: Limitar numero de resultados (opcional)
     """
     try:
+        # Chave de cache unica
+        cache_key = f"news_{days}_{include_papers}_{include_github}_{limit}"
+
+        # Tentar pegar do cache
+        cached = get_from_cache(cache_key)
+        if cached:
+            return cached
+
+        # Se não tem cache, buscar
         noticias = buscar_todas_fontes(
             dias=days,
             incluir_papers=include_papers,
@@ -340,12 +375,17 @@ async def get_news(
             fonte = n.get('fonte', 'Desconhecido')
             fontes_count[fonte] = fontes_count.get(fonte, 0) + 1
 
-        return {
+        result = {
             "total": len(noticias),
             "dias": days,
             "fontes": fontes_count,
             "resultados": noticias
         }
+
+        # Salvar no cache
+        save_to_cache(cache_key, result)
+
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao buscar noticias: {str(e)}")
 
@@ -363,6 +403,13 @@ async def search_content(
     - **days**: Numero de dias retroativos (default: 14)
     """
     try:
+        cache_key = f"search_{q.lower()}_{days}"
+
+        # Tentar cache
+        cached = get_from_cache(cache_key)
+        if cached:
+            return cached
+
         todas = buscar_todas_fontes(dias=days)
         keyword_lower = q.lower()
 
@@ -371,12 +418,15 @@ async def search_content(
             if keyword_lower in n['titulo'].lower() or keyword_lower in n.get('resumo', '').lower()
         ]
 
-        return {
+        result = {
             "keyword": q,
             "total": len(filtradas),
             "dias": days,
             "resultados": filtradas
         }
+
+        save_to_cache(cache_key, result)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro na busca: {str(e)}")
 
@@ -394,14 +444,23 @@ async def get_papers(
     - **max_results**: Maximo de papers (default: 50, max: 100)
     """
     try:
+        cache_key = f"papers_{days}_{max_results}"
+
+        cached = get_from_cache(cache_key)
+        if cached:
+            return cached
+
         papers = buscar_arxiv_papers(dias=days, max_results=max_results)
 
-        return {
+        result = {
             "total": len(papers),
             "dias": days,
             "categorias": ARXIV_CATEGORIAS,
             "resultados": papers
         }
+
+        save_to_cache(cache_key, result)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao buscar papers: {str(e)}")
 
@@ -419,13 +478,22 @@ async def get_github_trending(
     - **max_results**: Maximo de repos (default: 30, max: 50)
     """
     try:
+        cache_key = f"github_{days}_{max_results}"
+
+        cached = get_from_cache(cache_key)
+        if cached:
+            return cached
+
         repos = buscar_github_trending(dias=days, max_results=max_results)
 
-        return {
+        result = {
             "total": len(repos),
             "dias": days,
             "resultados": repos
         }
+
+        save_to_cache(cache_key, result)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao buscar GitHub: {str(e)}")
 
