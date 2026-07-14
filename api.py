@@ -8,6 +8,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from typing import List, Dict, Optional
 import feedparser
 from datetime import datetime, timedelta, timezone
@@ -15,6 +18,27 @@ from email.utils import parsedate_to_datetime
 import xml.etree.ElementTree as ET
 import requests
 import time
+import logging
+import sys
+
+# ============================================================================
+# LOGGING ESTRUTURADO
+# ============================================================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)s | %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# ============================================================================
+# RATE LIMITING
+# ============================================================================
+
+limiter = Limiter(key_func=get_remote_address)
 
 # ============================================================================
 # CACHE EM MEMORIA
@@ -28,18 +52,19 @@ def get_from_cache(key: str):
     if key in CACHE:
         data, timestamp = CACHE[key]
         if time.time() - timestamp < CACHE_TTL:
-            print(f"[CACHE HIT] {key}")
+            logger.info(f"CACHE HIT | key={key}")
             return data
         else:
-            # Cache expirado, remover
             del CACHE[key]
-    print(f"[CACHE MISS] {key}")
+            logger.info(f"CACHE EXPIRED | key={key}")
+    logger.info(f"CACHE MISS | key={key}")
     return None
 
 def save_to_cache(key: str, data):
     """Salva item no cache com timestamp"""
     CACHE[key] = (data, time.time())
-    print(f"[CACHE SAVED] {key}")
+    items = len(data) if isinstance(data, list) else 1
+    logger.info(f"CACHE SAVED | key={key} | items={items}")
 
 # ============================================================================
 # CONFIGURACAO FASTAPI
@@ -53,6 +78,10 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Adicionar rate limiter ao app
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # CORS - permitir acesso de qualquer origem
 app.add_middleware(
     CORSMiddleware,
@@ -61,6 +90,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ============================================================================
+# LOGGING MIDDLEWARE
+# ============================================================================
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """Middleware para logging estruturado de requests"""
+    start_time = time.time()
+    client_ip = request.client.host if request.client else "unknown"
+
+    response = await call_next(request)
+
+    process_time = (time.time() - start_time) * 1000  # em ms
+
+    logger.info(
+        f"REQUEST | method={request.method} | path={request.url.path} | "
+        f"ip={client_ip} | status={response.status_code} | "
+        f"time={process_time:.2f}ms"
+    )
+
+    return response
 
 # ============================================================================
 # EXCEPTION HANDLERS
@@ -325,8 +376,9 @@ def buscar_todas_fontes(dias: int = 14, incluir_papers: bool = True, incluir_git
 # ============================================================================
 
 @app.get("/")
-async def root():
-    """Endpoint raiz com informacoes da API."""
+@limiter.limit("60/minute")
+async def root(request: Request):
+    """Endpoint raiz com informacoes da API. Rate limit: 60 req/min."""
     return {
         "nome": "AI News Aggregator API",
         "versao": "1.0.0",
@@ -347,8 +399,9 @@ async def root():
 
 @app.get("/health")
 @app.head("/health")
-async def health():
-    """Health check endpoint (GET e HEAD)."""
+@limiter.limit("120/minute")
+async def health(request: Request):
+    """Health check endpoint (GET e HEAD). Rate limit: 120 req/min."""
     return {
         "status": "ok",
         "timestamp": datetime.now(timezone.utc).isoformat()
@@ -356,7 +409,9 @@ async def health():
 
 
 @app.get("/news")
+@limiter.limit("30/minute")
 async def get_news(
+    request: Request,
     days: int = Query(14, ge=1, le=90, description="Numero de dias retroativos (1-90)"),
     include_papers: bool = Query(True, description="Incluir papers do ArXiv"),
     include_github: bool = Query(True, description="Incluir repos do GitHub"),
@@ -412,7 +467,9 @@ async def get_news(
 
 
 @app.get("/search")
+@limiter.limit("30/minute")
 async def search_content(
+    request: Request,
     q: str = Query(..., min_length=2, description="Palavra-chave para busca"),
     days: int = Query(14, ge=1, le=90, description="Numero de dias retroativos")
 ):
@@ -453,7 +510,9 @@ async def search_content(
 
 
 @app.get("/papers")
+@limiter.limit("30/minute")
 async def get_papers(
+    request: Request,
     days: int = Query(14, ge=1, le=90, description="Numero de dias retroativos"),
     max_results: int = Query(50, ge=1, le=100, description="Maximo de papers")
 ):
@@ -487,7 +546,9 @@ async def get_papers(
 
 
 @app.get("/github")
+@limiter.limit("30/minute")
 async def get_github_trending(
+    request: Request,
     days: int = Query(14, ge=1, le=90, description="Numero de dias retroativos"),
     max_results: int = Query(30, ge=1, le=50, description="Maximo de repositorios")
 ):
@@ -520,7 +581,8 @@ async def get_github_trending(
 
 
 @app.get("/sources")
-async def get_sources():
+@limiter.limit("60/minute")
+async def get_sources(request: Request):
     """
     Lista todas as fontes de conteudo configuradas.
 

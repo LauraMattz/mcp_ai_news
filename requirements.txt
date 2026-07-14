@@ -6,6 +6,7 @@ mcp>=1.0.0
 # FastAPI REST API (para deploy em servidor)
 fastapi>=0.109.0
 uvicorn[standard]>=0.27.0
+slowapi>=0.1.9
 
 # RSS/Feed Parsing
 feedparser>=6.0.10
