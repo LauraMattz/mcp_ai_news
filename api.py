@@ -3,8 +3,11 @@ FastAPI REST API - Agregador de Noticias de IA
 API publica para buscar noticias, papers e repositorios sobre IA
 """
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from typing import List, Dict, Optional
 import feedparser
 from datetime import datetime, timedelta, timezone
@@ -58,6 +61,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ============================================================================
+# EXCEPTION HANDLERS
+# ============================================================================
+
+@app.exception_handler(405)
+async def method_not_allowed_handler(request: Request, exc: StarletteHTTPException):
+    """Handler para erros 405 - Method Not Allowed."""
+    return JSONResponse(
+        status_code=405,
+        content={
+            "error": "Method Not Allowed",
+            "detail": f"O método {request.method} não é permitido para {request.url.path}",
+            "allowed_methods": ["GET", "HEAD"] if request.url.path == "/health" else ["GET"],
+            "hint": "Use GET para acessar este endpoint. Veja a documentação: /docs"
+        }
+    )
 
 # ============================================================================
 # CONFIGURACAO DE FONTES
@@ -326,8 +346,9 @@ async def root():
 
 
 @app.get("/health")
+@app.head("/health")
 async def health():
-    """Health check endpoint."""
+    """Health check endpoint (GET e HEAD)."""
     return {
         "status": "ok",
         "timestamp": datetime.now(timezone.utc).isoformat()
