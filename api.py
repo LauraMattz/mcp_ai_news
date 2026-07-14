@@ -174,6 +174,26 @@ FONTES_RSS = {
         "nome": "The Verge AI",
         "url": "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml",
         "ativa": True
+    },
+    "meta_research": {
+        "nome": "Meta Research",
+        "url": "https://research.facebook.com/feed/",
+        "ativa": True
+    },
+    "nvidia_blog": {
+        "nome": "Nvidia Blog",
+        "url": "https://blogs.nvidia.com/feed/",
+        "ativa": True
+    },
+    "stanford_hai": {
+        "nome": "Stanford HAI",
+        "url": "https://hai.stanford.edu/news/rss.xml",
+        "ativa": True
+    },
+    "mit_csail": {
+        "nome": "MIT CSAIL",
+        "url": "https://news.mit.edu/rss/topic/computer-science-and-artificial-intelligence-laboratory-csail",
+        "ativa": True
     }
 }
 
