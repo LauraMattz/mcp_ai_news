@@ -393,23 +393,25 @@ def formatar_noticias(noticias: List[Dict], titulo: str = "NOTICIAS DE IA") -> s
         else:
             quando = f"Ha {dias_atras} dias"
 
-        resultado += f"{i}. [{item['fonte']}] {item['titulo']}\n"
-        resultado += f"   Link: {item['link']}\n"
+        resultado += f"\n{i}. [{item['fonte']}] {item['titulo']}\n"
+        resultado += f"   >>> {item['link']}\n"
         resultado += f"   Data: {data_obj.strftime('%d/%m/%Y')} ({quando})\n"
 
         # Informacoes adicionais por tipo
         if item['fonte'] == "ArXiv" and 'autores' in item and item['autores']:
-            resultado += f"   Autores: {', '.join(item['autores'])}\n"
+            resultado += f"   Autores: {', '.join(item['autores'][:3])}"
+            if len(item['autores']) > 3:
+                resultado += f" +{len(item['autores']) - 3} mais"
+            resultado += "\n"
         elif item['fonte'] == "GitHub" and 'stars' in item:
             resultado += f"   Stars: {item['stars']} | Linguagem: {item.get('linguagem', 'N/A')}\n"
 
         # Resumo
         resumo = item['resumo']
-        if len(resumo) > 200:
-            resumo = resumo[:200] + "..."
+        if len(resumo) > 250:
+            resumo = resumo[:250] + "..."
         if resumo:
-            resultado += f"   Resumo: {resumo}\n"
-        resultado += "\n"
+            resultado += f"   > {resumo}\n"
 
     if len(noticias) > 50:
         resultado += f"\n... e mais {len(noticias) - 50} itens\n"
